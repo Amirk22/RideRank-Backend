@@ -10,9 +10,7 @@ urlpatterns = [
     path('logout/',views.LogoutAPIView.as_view(),name='LogoutAPI'),
     path('trip/',views.TripRequestAPIView.as_view(),name='TripRequestAPIView'),
     path('trip-list/',views.TripListAPIView.as_view(),name='TripListAPI'),
-    path('trip/<int:pk>/',views.TripDetailAPIView.as_view(),name='TripDetailAPI'),
-    path('rating/',views.RatingListCreateAPIView.as_view(),name='RatingListCreateAPIView'),
-    path('rating/<int:pk>/',views.RatingDetailAPIView.as_view(),name='RatingDetailAPIView'),
+    path('rating/',views.RatingListAPIView.as_view(),name='RatingListAPIView'),
     path('report/',views.ReportListCreateAPIView.as_view(),name='ReportListCreateAPI'),
     path('report/<int:pk>/',views.ReportDetailAPIView.as_view(),name='ReportDetailAPI'),
 ]

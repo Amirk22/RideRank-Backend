@@ -119,17 +119,36 @@ class TripListAPIView(generics.ListAPIView):
     queryset = Trip.objects.all()
     serializer_class = TripSerializer
 
-class TripDetailAPIView(generics.RetrieveAPIView):
-    queryset = Trip.objects.all()
-    serializer_class = TripSerializer
 
-class RatingListCreateAPIView(generics.ListCreateAPIView):
-    queryset = Rating.objects.all()
+class RatingListAPIView(generics.ListCreateAPIView):
     serializer_class = RatingSerializer
 
-class RatingDetailAPIView(generics.RetrieveAPIView):
-    queryset = Rating.objects.all()
-    serializer_class = RatingSerializer
+    def get_queryset(self):
+        user_id = self.request.session.get('user_id')
+        if not user_id:
+            return Rating.objects.none()
+        return Rating.objects.filter(
+            models.Q(from_user_id=user_id) | models.Q(to_user_id=user_id)
+        )
+
+    def perform_create(self, serializer):
+        user_id = self.request.session.get('user_id')
+        if not user_id:
+            raise ValidationError('Not logged in')
+
+        from_user = User.objects.get(id=user_id)
+        trip = serializer.validated_data['trip']
+
+        if trip.driver != from_user and trip.passenger != from_user:
+            raise ValidationError('You can only rate trips you participated in.')
+
+        to_user = trip.driver if trip.passenger == from_user else trip.passenger
+
+        if Rating.objects.filter(trip=trip, from_user=from_user).exists():
+            raise ValidationError('You have already rated this trip.')
+
+        serializer.save(from_user=from_user, to_user=to_user)
+
 
 class ReportListCreateAPIView(generics.ListCreateAPIView):
     queryset = Report.objects.all()

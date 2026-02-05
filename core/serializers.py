@@ -58,26 +58,31 @@ class TripSerializer(serializers.ModelSerializer):
 
 
 class RatingSerializer(serializers.ModelSerializer):
+    from_user = serializers.PrimaryKeyRelatedField(read_only=True)
+    to_user = serializers.PrimaryKeyRelatedField(read_only=True)
+
+    trip = serializers.PrimaryKeyRelatedField(
+        queryset=Trip.objects.none()
+    )
+
     class Meta:
         model = Rating
-        fields = ['id','trip','from_user','to_user','score','created_at']
-        read_only_fields = ['created_at']
+        fields = ['id', 'trip', 'from_user', 'to_user', 'score', 'created_at']
+        read_only_fields = ['id', 'created_at', 'from_user', 'to_user']
 
-    def validate(self, data):
-        from_user = data['from_user']
-        to_user = data['to_user']
-        trip = data['trip']
-        if Rating.objects.filter(trip=trip, from_user=from_user, to_user=to_user).exists():
-            raise serializers.ValidationError("You have already rated this user on this trip.")
-        if from_user == to_user:
-            raise ValidationError("User cannot rate themselves.")
-        if trip.driver != from_user and trip.passenger != from_user:
-            raise ValidationError("The rater did not participate in this trip.")
-        if trip.driver != to_user and trip.passenger != to_user:
-            raise ValidationError("The award recipient did not participate in this trip.")
-        if not (1 <= data['score'] <= 5):
-            raise ValidationError("The score must be between 1 and 5.")
-        return data
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        user_id = self.context['request'].session.get('user_id')
+        if user_id:
+            self.fields['trip'].queryset = Trip.objects.filter(
+                models.Q(driver_id=user_id) | models.Q(passenger_id=user_id)
+            )
+
+    def validate_score(self, value):
+        if not (1 <= value <= 5):
+            raise serializers.ValidationError("The score must be between 1 and 5.")
+        return value
+
 
 
 class ReportSerializer(serializers.ModelSerializer):
