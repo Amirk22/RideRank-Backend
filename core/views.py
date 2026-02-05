@@ -9,13 +9,20 @@ from .models import *
 from rest_framework import generics, request
 from rest_framework import status
 from rest_framework import permissions
-from .serializers import ProfileSerializer, TripSerializer, RatingSerializer,ReportSerializer ,RegisterSerializer,LoginSerializer
+from .serializers import ProfileSerializer, TripSerializer, RatingSerializer, ReportSerializer, RegisterSerializer, \
+    LoginSerializer, TripRequestSerializer, UserSerializer
+import random
+from datetime import timedelta
+from django.utils import timezone
 
 # Create your views here.
 
 def home(request):
     return HttpResponse('<h1>Ride Rank</h1>')
 
+class UserListAPIView(generics.ListAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
 class RegisterAPIView(generics.CreateAPIView):
     serializer_class = RegisterSerializer
 
@@ -24,7 +31,6 @@ class RegisterAPIView(generics.CreateAPIView):
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
-
 
 class LoginAPIView(generics.GenericAPIView):
     serializer_class = LoginSerializer
@@ -60,7 +66,56 @@ class ProfileAPIView(APIView):
         serializer = ProfileSerializer(user)
         return Response(serializer.data , status=200)
 
-class TripListCreateAPIView(generics.ListCreateAPIView):
+class TripRequestAPIView(generics.CreateAPIView):
+    serializer_class = TripRequestSerializer
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        user_id = request.session.get('user_id')
+        if not user_id:
+            return Response({'error': 'Not logged in'}, status=401)
+
+        try:
+            passenger = User.objects.get(id=user_id, role='PASSENGER')
+        except User.DoesNotExist:
+            return Response({'error': 'Passenger not found'}, status=404)
+
+        available_drivers = User.objects.filter(
+            role='DRIVER'
+        ).exclude(id=passenger.id)
+
+        if not available_drivers.exists():
+            return Response({'error': 'No available drivers'}, status=400)
+
+        driver = random.choice(list(available_drivers))
+
+        price = random.randint(10,100)
+
+        end_time = timezone.now() + timedelta(minutes=random.randint(5, 30))
+
+        trip = Trip.objects.create(
+            start_location=serializer.validated_data['start_location'],
+            destination=serializer.validated_data['destination'],
+            driver=driver,
+            passenger=passenger,
+            price=price,
+            ended_at=end_time,
+        )
+
+        return Response({
+            'trip_id': trip.id,
+            'driver': driver.full_name,
+            'passenger': passenger.full_name,
+            'start_location': trip.start_location,
+            'destination': trip.destination,
+            'price': price,
+            'ended_at': trip.ended_at,
+        }, status=201)
+
+
+class TripListAPIView(generics.ListAPIView):
     queryset = Trip.objects.all()
     serializer_class = TripSerializer
 

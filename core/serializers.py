@@ -2,6 +2,11 @@ from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 from core.models import *
 
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['first_name', 'last_name', 'email', 'phone', 'role','trust_score']
+
 class ProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
@@ -18,11 +23,14 @@ class RegisterSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError("This user has already registered.")
         return value
 
-
 class LoginSerializer(serializers.Serializer):
     email = serializers.EmailField()
 
 
+class TripRequestSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Trip
+        fields = ['start_location', 'destination']
 
 class TripSerializer(serializers.ModelSerializer):
     driver = serializers.PrimaryKeyRelatedField(
@@ -45,8 +53,9 @@ class TripSerializer(serializers.ModelSerializer):
 
     def validate(self, data):
         if data['driver'] == data['passenger']:
-            raise serializers.ValidationError("راننده و مسافر نمی‌توانند یک نفر باشند")
+            raise serializers.ValidationError("The driver and passenger cannot be the same person.")
         return data
+
 
 class RatingSerializer(serializers.ModelSerializer):
     class Meta:
@@ -69,6 +78,7 @@ class RatingSerializer(serializers.ModelSerializer):
         if not (1 <= data['score'] <= 5):
             raise ValidationError("The score must be between 1 and 5.")
         return data
+
 
 class ReportSerializer(serializers.ModelSerializer):
     class Meta:
