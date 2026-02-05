@@ -2,14 +2,27 @@ from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 from core.models import *
 
-class UserSerializer(serializers.ModelSerializer):
+class ProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = "__all__"
         read_only_fields = ('trust_score', 'created_at', 'updated_at')
 
-        def get_trust_score(self, obj):
-            return obj.calculate_trust_score()
+class RegisterSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['first_name', 'last_name', 'email', 'phone', 'role']
+
+    def validate_email(self, value):
+        if User.objects.filter(email__iexact=value).exists():
+            raise serializers.ValidationError("This user has already registered.")
+        return value
+
+
+class LoginSerializer(serializers.Serializer):
+    email = serializers.EmailField()
+
+
 
 class TripSerializer(serializers.ModelSerializer):
     driver = serializers.PrimaryKeyRelatedField(

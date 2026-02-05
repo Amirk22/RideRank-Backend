@@ -3,8 +3,10 @@ from . import views
 
 urlpatterns = [
     path('',views.home,name='home'),
-    path('user/',views.UserListCreateAPIView.as_view(),name='UserListCreateAPI'),
-    path('user/<int:pk>/',views.UserDetailAPIView.as_view(),name='UserDetailAPI'),
+    path('profile/',views.ProfileAPIView.as_view(),name='UserListCreateAPI'),
+    path('register/',views.RegisterAPIView.as_view(),name='RegisterAPI'),
+    path('login/',views.LoginAPIView.as_view(),name='LoginAPI'),
+    path('logout/',views.LogoutAPIView.as_view(),name='LogoutAPI'),
     path('trip/',views.TripListCreateAPIView.as_view(),name='TripListCreateAPI'),
     path('trip/<int:pk>/',views.TripDetailAPIView.as_view(),name='TripDetailAPI'),
     path('rating/',views.RatingListCreateAPIView.as_view(),name='RatingListCreateAPIView'),
