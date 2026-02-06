@@ -9,14 +9,20 @@ from .models import *
 from rest_framework import generics, request
 from rest_framework import status
 from rest_framework import permissions
-from .serializers import ProfileSerializer, TripSerializer, RatingSerializer, ReportSerializer, RegisterSerializer, \
-    LoginSerializer, TripRequestSerializer, UserSerializer
+from .serializers import *
 import random
 from datetime import timedelta
 from django.utils import timezone
 from django.db.models import Q
+from rest_framework import permissions
 
 # Create your views here.
+
+class IsLoggedIn(permissions.BasePermission):
+    message = "You must be logged in to access this."
+
+    def has_permission(self, request, view):
+        return request.session.get('user_id') is not None
 
 def home(request):
     return HttpResponse('<h1>Ride Rank</h1>')
@@ -48,7 +54,7 @@ class LoginAPIView(generics.GenericAPIView):
         return Response({'message': 'Logged in', 'user': user.full_name}, status=200)
 
 class LogoutAPIView(APIView):
-    permission_classes = []
+    permission_classes = [IsLoggedIn]
 
     def post(self, request):
         request.session.flush()
@@ -69,6 +75,7 @@ class ProfileAPIView(APIView):
 
 class TripRequestAPIView(generics.CreateAPIView):
     serializer_class = TripRequestSerializer
+    permission_classes = [IsLoggedIn]
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
@@ -133,6 +140,7 @@ class TripListAPIView(APIView):
 
 class RatingListCreateAPIView(generics.ListCreateAPIView):
     serializer_class = RatingSerializer
+    permission_classes = [IsLoggedIn]
 
     def get_queryset(self):
         user_id = self.request.session.get('user_id')
@@ -162,8 +170,8 @@ class RatingListCreateAPIView(generics.ListCreateAPIView):
 
 
 class ReportListCreateAPIView(generics.ListCreateAPIView):
-
     serializer_class = ReportSerializer
+    permission_classes = [IsLoggedIn]
 
     def get_queryset(self):
         user_id = self.request.session.get('user_id')
@@ -188,6 +196,7 @@ class ReportListCreateAPIView(generics.ListCreateAPIView):
 
 class MyReportsListAPIView(generics.ListAPIView):
     serializer_class = ReportSerializer
+    permission_classes = [IsLoggedIn]
 
     def get_queryset(self):
         user_id = self.request.session.get('user_id')
