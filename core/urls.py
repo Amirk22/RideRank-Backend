@@ -9,8 +9,8 @@ urlpatterns = [
     path('login/',views.LoginAPIView.as_view(),name='LoginAPI'),
     path('logout/',views.LogoutAPIView.as_view(),name='LogoutAPI'),
     path('trip/',views.TripRequestAPIView.as_view(),name='TripRequestAPIView'),
-    path('list-trips/',views.TripListAPIView.as_view(),name='TripListAPI'),
+    path('my-trips/',views.TripListAPIView.as_view(),name='TripListAPI'),
     path('rating/',views.RatingListCreateAPIView.as_view(),name='RatingListAPIView'),
     path('report/',views.ReportListCreateAPIView.as_view(),name='ReportListCreateAPI'),
-    path('report/<int:pk>/',views.ReportDetailAPIView.as_view(),name='ReportDetailAPI'),
+    path('my-reports/',views.MyReportsListAPIView.as_view(),name='MyReportListAPI'),
 ]

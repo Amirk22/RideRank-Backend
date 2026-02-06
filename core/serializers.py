@@ -81,20 +81,56 @@ class RatingSerializer(serializers.ModelSerializer):
 
 
 class ReportSerializer(serializers.ModelSerializer):
+    reporter = serializers.PrimaryKeyRelatedField(read_only=True)
+    reported_user = serializers.PrimaryKeyRelatedField(read_only=True)
+
+    trip = serializers.PrimaryKeyRelatedField(
+        queryset=Trip.objects.none()
+    )
     class Meta:
         model = Report
         fields = ['trip','reporter','reported_user','type','description','created_at']
         read_only_fields = ['created_at']
-    def validate(self, data):
-        reporter = data['reporter']
-        reported_user = data['reported_user']
-        trip = data['trip']
-        if reporter == reported_user:
-            raise serializers.ValidationError("You cannot report yourself.")
-        if Report.objects.filter(trip=trip, reporter=reporter, reported_user=reported_user).exists():
-            raise serializers.ValidationError("You have already reported this user for this trip.")
-        if trip.driver != reported_user and trip.passenger != reported_user:
-            raise serializers.ValidationError("The reported user did not participate in this trip.")
-        if trip.driver != reporter and trip.passenger != reporter:
-            raise serializers.ValidationError("The reporter did not participate in this trip.")
-        return data
+
+    PASSENGER_REPORT_TYPES = [
+        ('RUDE_BEHAVIOR', 'Rude behavior'),
+        ('NO_SHOW', 'No show'),
+        ('LATE_ARRIVAL', 'Late arrival'),
+        ('DANGEROUS_DRIVING', 'Dangerous driving'),
+        ('ROUTE_MANIPULATION', 'Route manipulation'),
+        ('VEHICLE_ISSUE', 'Vehicle issue'),
+        ('HARASSMENT', 'Harassment'),
+        ('CANCEL_AFTER_ACCEPT', 'Cancel after accept'),
+        ('MORE', 'More'),
+    ]
+
+    DRIVER_REPORT_TYPES = [
+        ('RUDE_BEHAVIOR', 'Rude behavior'),
+        ('NO_SHOW', 'No show'),
+        ('LATE_ARRIVAL', 'Late arrival'),
+        ('PAYMENT_ISSUE', 'Payment issue'),
+        ('FAKE_LOCATION', 'Fake location'),
+        ('HARASSMENT', 'Harassment'),
+        ('CANCEL_AFTER_ACCEPT', 'Cancel after accept'),
+        ('MORE', 'More'),
+    ]
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        user_id = self.context['request'].session.get('user_id')
+        if user_id:
+            self.fields['trip'].queryset = Trip.objects.filter(
+                models.Q(driver_id=user_id) | models.Q(passenger_id=user_id)
+            )
+            try:
+                user = User.objects.get(id=user_id)
+            except User.DoesNotExist:
+                user = None
+            if user.role == 'DRIVER':
+                self.fields['type'].choices = self.DRIVER_REPORT_TYPES
+            elif user.role == 'PASSENGER':
+                self.fields['type'].choices = self.PASSENGER_REPORT_TYPES
+
+
+
+

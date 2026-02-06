@@ -162,9 +162,38 @@ class RatingListCreateAPIView(generics.ListCreateAPIView):
 
 
 class ReportListCreateAPIView(generics.ListCreateAPIView):
-    queryset = Report.objects.all()
+
     serializer_class = ReportSerializer
 
-class ReportDetailAPIView(generics.RetrieveAPIView):
-    queryset = Report.objects.all()
+    def get_queryset(self):
+        user_id = self.request.session.get('user_id')
+        if not user_id:
+            return Report.objects.none()
+
+        if user_id:
+            return Report.objects.filter(reporter_id=user_id)
+    def perform_create(self, serializer):
+        user_id = self.request.session.get('user_id')
+        if not user_id:
+            raise ValidationError('Not logged in')
+        reporter = User.objects.get(id=user_id)
+        trip = serializer.validated_data['trip']
+        if trip.passenger != reporter and trip.driver != reporter:
+            raise ValidationError('You can only rate trips you participated in.')
+        reported_user = trip.driver if trip.passenger == reporter else trip.passenger
+        if Report.objects.filter(trip=trip, reporter=reporter).exists():
+            raise ValidationError('You have already reported this trip.')
+
+        serializer.save(reporter=reporter, reported_user=reported_user)
+
+class MyReportsListAPIView(generics.ListAPIView):
     serializer_class = ReportSerializer
+
+    def get_queryset(self):
+        user_id = self.request.session.get('user_id')
+        if not user_id:
+            return Report.objects.none()
+        if user_id:
+            return Report.objects.filter(reported_user_id=user_id)
+
+
