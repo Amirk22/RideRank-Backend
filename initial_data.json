@@ -1,0 +1,276 @@
+[
+{
+  "model": "core.user",
+  "pk": 1,
+  "fields": {
+    "first_name": "Arman",
+    "last_name": "Pakzad",
+    "email": "arman.pakzad@example.com",
+    "phone": "09120000001",
+    "role": "DRIVER",
+    "trust_score": 5,
+    "created_at": "2026-02-06T08:48:51.919Z",
+    "updated_at": "2026-02-06T08:48:51.919Z",
+    "is_active": true,
+    "last_login": null
+  }
+},
+{
+  "model": "core.user",
+  "pk": 2,
+  "fields": {
+    "first_name": "Bahare",
+    "last_name": "Azadi",
+    "email": "bahare.azadi@example.com",
+    "phone": "09120000002",
+    "role": "DRIVER",
+    "trust_score": 25,
+    "created_at": "2026-02-06T08:50:29.076Z",
+    "updated_at": "2026-02-06T08:50:29.076Z",
+    "is_active": true,
+    "last_login": null
+  }
+},
+{
+  "model": "core.user",
+  "pk": 3,
+  "fields": {
+    "first_name": "Baran",
+    "last_name": "Rahmati",
+    "email": "baran.rahmati@example.com",
+    "phone": "09120000003",
+    "role": "PASSENGER",
+    "trust_score": 12,
+    "created_at": "2026-02-06T08:51:15.049Z",
+    "updated_at": "2026-02-06T08:51:15.049Z",
+    "is_active": true,
+    "last_login": null
+  }
+},
+{
+  "model": "core.user",
+  "pk": 4,
+  "fields": {
+    "first_name": "Amir",
+    "last_name": "Ghobadi",
+    "email": "amir.ghobadi@example.com",
+    "phone": "09120000004",
+    "role": "PASSENGER",
+    "trust_score": 12,
+    "created_at": "2026-02-06T08:51:52.494Z",
+    "updated_at": "2026-02-06T08:51:52.494Z",
+    "is_active": true,
+    "last_login": null
+  }
+},
+{
+  "model": "core.trip",
+  "pk": 1,
+  "fields": {
+    "start_location": "Vanak",
+    "destination": "Tajrish",
+    "price": "12.00",
+    "driver": 2,
+    "passenger": 3,
+    "created_at": "2026-02-06T08:55:12.163Z",
+    "ended_at": "2026-02-06T09:08:12.163Z"
+  }
+},
+{
+  "model": "core.trip",
+  "pk": 2,
+  "fields": {
+    "start_location": "Saadat Abad",
+    "destination": "Valiasr",
+    "price": "76.00",
+    "driver": 2,
+    "passenger": 3,
+    "created_at": "2026-02-06T08:55:45.112Z",
+    "ended_at": "2026-02-06T09:14:45.111Z"
+  }
+},
+{
+  "model": "core.trip",
+  "pk": 3,
+  "fields": {
+    "start_location": "Enghelab",
+    "destination": "Tehranpars",
+    "price": "52.00",
+    "driver": 2,
+    "passenger": 3,
+    "created_at": "2026-02-06T08:56:00.379Z",
+    "ended_at": "2026-02-06T09:04:00.379Z"
+  }
+},
+{
+  "model": "core.trip",
+  "pk": 4,
+  "fields": {
+    "start_location": "Narmak",
+    "destination": "Ekbatan",
+    "price": "19.00",
+    "driver": 2,
+    "passenger": 4,
+    "created_at": "2026-02-06T08:58:11.477Z",
+    "ended_at": "2026-02-06T09:17:11.477Z"
+  }
+},
+{
+  "model": "core.trip",
+  "pk": 5,
+  "fields": {
+    "start_location": "Sattarkhan",
+    "destination": "Azadi",
+    "price": "49.00",
+    "driver": 2,
+    "passenger": 4,
+    "created_at": "2026-02-06T08:58:24.180Z",
+    "ended_at": "2026-02-06T09:24:24.180Z"
+  }
+},
+{
+  "model": "core.trip",
+  "pk": 6,
+  "fields": {
+    "start_location": "Shahrak Gharb",
+    "destination": "Jordan",
+    "price": "33.00",
+    "driver": 1,
+    "passenger": 4,
+    "created_at": "2026-02-06T08:58:39.230Z",
+    "ended_at": "2026-02-06T09:09:39.229Z"
+  }
+},
+{
+  "model": "core.scoreevent",
+  "pk": 1,
+  "fields": {
+    "user": 2,
+    "event_type": "TRIP",
+    "score_change": 5,
+    "trip": 1,
+    "created_at": "2026-02-06T08:55:12.169Z"
+  }
+},
+{
+  "model": "core.scoreevent",
+  "pk": 2,
+  "fields": {
+    "user": 3,
+    "event_type": "TRIP",
+    "score_change": 4,
+    "trip": 1,
+    "created_at": "2026-02-06T08:55:12.180Z"
+  }
+},
+{
+  "model": "core.scoreevent",
+  "pk": 3,
+  "fields": {
+    "user": 2,
+    "event_type": "TRIP",
+    "score_change": 5,
+    "trip": 2,
+    "created_at": "2026-02-06T08:55:45.116Z"
+  }
+},
+{
+  "model": "core.scoreevent",
+  "pk": 4,
+  "fields": {
+    "user": 3,
+    "event_type": "TRIP",
+    "score_change": 4,
+    "trip": 2,
+    "created_at": "2026-02-06T08:55:45.125Z"
+  }
+},
+{
+  "model": "core.scoreevent",
+  "pk": 5,
+  "fields": {
+    "user": 2,
+    "event_type": "TRIP",
+    "score_change": 5,
+    "trip": 3,
+    "created_at": "2026-02-06T08:56:00.386Z"
+  }
+},
+{
+  "model": "core.scoreevent",
+  "pk": 6,
+  "fields": {
+    "user": 3,
+    "event_type": "TRIP",
+    "score_change": 4,
+    "trip": 3,
+    "created_at": "2026-02-06T08:56:00.395Z"
+  }
+},
+{
+  "model": "core.scoreevent",
+  "pk": 7,
+  "fields": {
+    "user": 2,
+    "event_type": "TRIP",
+    "score_change": 5,
+    "trip": 4,
+    "created_at": "2026-02-06T08:58:11.481Z"
+  }
+},
+{
+  "model": "core.scoreevent",
+  "pk": 8,
+  "fields": {
+    "user": 4,
+    "event_type": "TRIP",
+    "score_change": 4,
+    "trip": 4,
+    "created_at": "2026-02-06T08:58:11.492Z"
+  }
+},
+{
+  "model": "core.scoreevent",
+  "pk": 9,
+  "fields": {
+    "user": 2,
+    "event_type": "TRIP",
+    "score_change": 5,
+    "trip": 5,
+    "created_at": "2026-02-06T08:58:24.186Z"
+  }
+},
+{
+  "model": "core.scoreevent",
+  "pk": 10,
+  "fields": {
+    "user": 4,
+    "event_type": "TRIP",
+    "score_change": 4,
+    "trip": 5,
+    "created_at": "2026-02-06T08:58:24.196Z"
+  }
+},
+{
+  "model": "core.scoreevent",
+  "pk": 11,
+  "fields": {
+    "user": 1,
+    "event_type": "TRIP",
+    "score_change": 5,
+    "trip": 6,
+    "created_at": "2026-02-06T08:58:39.235Z"
+  }
+},
+{
+  "model": "core.scoreevent",
+  "pk": 12,
+  "fields": {
+    "user": 4,
+    "event_type": "TRIP",
+    "score_change": 4,
+    "trip": 6,
+    "created_at": "2026-02-06T08:58:39.244Z"
+  }
+}
+]
