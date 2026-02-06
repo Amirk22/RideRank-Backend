@@ -51,11 +51,6 @@ class TripSerializer(serializers.ModelSerializer):
         ]
         read_only_fields = ['created_at', 'driver_name', 'passenger_name']
 
-    def validate(self, data):
-        if data['driver'] == data['passenger']:
-            raise serializers.ValidationError("The driver and passenger cannot be the same person.")
-        return data
-
 
 class RatingSerializer(serializers.ModelSerializer):
     from_user = serializers.PrimaryKeyRelatedField(read_only=True)

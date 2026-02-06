@@ -14,6 +14,7 @@ from .serializers import ProfileSerializer, TripSerializer, RatingSerializer, Re
 import random
 from datetime import timedelta
 from django.utils import timezone
+from django.db.models import Q
 
 # Create your views here.
 
@@ -115,12 +116,22 @@ class TripRequestAPIView(generics.CreateAPIView):
         }, status=201)
 
 
-class TripListAPIView(generics.ListAPIView):
-    queryset = Trip.objects.all()
-    serializer_class = TripSerializer
+class TripListAPIView(APIView):
+    def get(self, request):
+        user_id = request.session.get('user_id')
+        if not user_id:
+            return Response({'error': 'Not logged in'}, status=401)
+
+        trips = Trip.objects.filter(Q(driver_id=user_id) | Q(passenger_id=user_id))
+
+        if not trips.exists():
+            return Response({'error': 'This User Does Not Have Any Trip'}, status=404)
+
+        serializer = TripSerializer(trips,many=True)
+        return Response(serializer.data, status=200)
 
 
-class RatingListAPIView(generics.ListCreateAPIView):
+class RatingListCreateAPIView(generics.ListCreateAPIView):
     serializer_class = RatingSerializer
 
     def get_queryset(self):
