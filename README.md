@@ -19,10 +19,10 @@ RideRank focuses on:
 ## Installation
 1. Clone the repository:
 ```bash
-git clone https://github.com/Amirk22/RideRank-Backend.git
+git clone https://github.com/Amirk22/RideRank.git
 ```
 ```bash
-cd RideRank-Backend
+cd RideRank
 ```
 2. Build and run the project using Docker Compose:
 ```bash
