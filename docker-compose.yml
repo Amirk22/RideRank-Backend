@@ -2,7 +2,9 @@ version: "3.9"
 services:
   django:
     container_name: ride_rank
-    build: .
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
     command: >
       sh -c "
         python manage.py makemigrations || echo 'No migrations to make';
@@ -14,6 +16,6 @@ services:
         python manage.py runserver 0.0.0.0:8000
       "
     volumes:
-      - .:/app
+      - ./backend:/app
     ports:
       - "8000:8000"
